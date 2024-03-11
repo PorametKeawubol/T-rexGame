@@ -7,6 +7,7 @@ from kivy.uix.label import Label
 from kivy.uix.image import Image
 from random import randint
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.relativelayout import RelativeLayout #chatแนะนำอันนี้มา มันบอกว่า ตัวนี้จะเอาไว้กำหนดด้วยตัวเอง เป็นแบบละเอียดกว่า
 
 
 class Dinosaur(Image):

@@ -1,6 +1,6 @@
 from kivy.app import App
 from kivy.uix.widget import Widget
-from kivy.properties import NumericProperty, BooleanProperty,ObjectProperty
+from kivy.properties import NumericProperty, BooleanProperty, ObjectProperty
 from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.uix.label import Label
@@ -19,7 +19,7 @@ class Dinosaur(Image):
         super().__init__(**kwargs)
         self.source = 'images/t-rex.png'
         self.size_hint = (None, None)
-        self.size = (100, 100)  
+        self.size = (100, 100)
         self.pos_hint = {'center_x': 0.1, 'center_y': 0.3}
         self.velocity_y = 0
 
@@ -47,9 +47,9 @@ class Dinosaur(Image):
 class Obstacle(Image):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.source = 'images/cactus-big.png' 
+        self.source = 'images/cactus-big.png'
         self.size_hint = (None, None)
-        self.size = (100, 100) 
+        self.size = (100, 100)
         self.pos_hint = {'center_x': 1, 'center_y': 0.3}
         self.velocity_x = 300
 
@@ -85,10 +85,12 @@ class Game(Widget):
         self.background = Background()
         self.dinosaur = Dinosaur()
         self.obstacle = Obstacle()
+        self.point = Point()  # Create an instance of Point
         self.add_widget(self.background)
         self.add_widget(self.dinosaur)
         self.add_widget(self.obstacle)
-        Clock.schedule_interval(self.update, 1/60)
+        self.add_widget(self.point)  # Add Point widget to the game
+        Clock.schedule_interval(self.update, 1 / 60)
 
     def update(self, dt):
         self.dinosaur.update(dt)
@@ -99,10 +101,26 @@ class Game(Widget):
     def game_over(self):
         self.remove_widget(self.dinosaur)
         self.remove_widget(self.obstacle)
-        self.add_widget(Label(text='Game Over', font_size=50, pos_hint={'center_x': 0.5, 'center_y': 0.5}))
+        self.add_widget(
+            Label(text='Game Over', font_size=50, pos_hint={'center_x': 0.5, 'center_y': 0.5}))
 
     def on_touch_down(self, touch):
         self.dinosaur.jump()
+
+class Point(Label):
+    score = NumericProperty(0)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.color = (1, 1, 1, 1)  # White color
+        self.font_size = '24sp'
+        self.pos_hint = {'right': 1, 'top': 1}  # Position at top right corner
+        self.text = str(self.score)  # Display initial score
+        Clock.schedule_interval(self.update_score, 0.07)  # Update score 
+
+    def update_score(self, dt):
+        self.score += 1
+        self.text = str(self.score)  # Update displayed score
 
 class T_RexApp(App):
     def build(self):

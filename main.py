@@ -7,7 +7,6 @@ from kivy.clock import Clock
 from kivy.graphics import Ellipse, Rectangle
 from kivy.uix.label import Label
 from random import randint
-
 class Background(Widget):
     cloud_texture = ObjectProperty(None)
     score_label = ObjectProperty(None)
@@ -24,8 +23,8 @@ class Background(Widget):
             self.bg = Rectangle(source='sky.png', size=Window.size, pos=self.pos)
 
             # Draw clouds using Ellipse
-            self.cloud_1 = Ellipse(pos=(0, Window.height * 0.75), size=(200, 100))
-            self.cloud_2 = Ellipse(pos=(Window.width * 0.5, Window.height * 0.6), size=(150, 80))
+            self.cloud_1 = Ellipse(texture=Image(source='images/cloud-big.png').texture, pos=(Window.width, Window.height * 0.75), size=(200, 100))
+            self.cloud_2 = Ellipse(texture=Image(source='images/cloud-small.png').texture, pos=(Window.width * 0.5, Window.height * 0.6), size=(150, 80))
 
         # Create label for displaying score
         self.score_label = Label(text='0', color=(0, 0, 0, 1), font_size='24sp', size_hint=(None, None), size=(100, 50),
@@ -35,12 +34,12 @@ class Background(Widget):
 
     def scroll_textures(self, time_passed):
         # Set up cloud movement
-        self.cloud_1.pos = (self.cloud_1.pos[0] + time_passed * 50, self.cloud_1.pos[1])
-        self.cloud_2.pos = (self.cloud_2.pos[0] + time_passed * 50, self.cloud_2.pos[1])
-        if self.cloud_1.pos[0] > Window.width:
-            self.cloud_1.pos = (-200, Window.height * 0.75)
-        if self.cloud_2.pos[0] > Window.width:
-            self.cloud_2.pos = (-150, Window.height * 0.6)
+        self.cloud_1.pos = (self.cloud_1.pos[0] - time_passed * 50, self.cloud_1.pos[1])
+        self.cloud_2.pos = (self.cloud_2.pos[0] - time_passed * 80, self.cloud_2.pos[1])
+        if self.cloud_1.pos[0] + self.cloud_1.size[0] < 0:
+            self.cloud_1.pos = (Window.width, Window.height * 0.75)
+        if self.cloud_2.pos[0] + self.cloud_2.size[0] < 0:
+            self.cloud_2.pos = (Window.width, Window.height * 0.6)
 
 class Dinosaur(Image):
     is_jumping = False
@@ -111,7 +110,8 @@ class Point(Widget):
         Clock.schedule_interval(self.update_score, 0.07)  # Update score
 
     def update_score(self, dt):
-        self.parent.background.score_label.text = str(self.score)  # Update displayed score
+        
+        self.parent.background.score_label.text = str(self.score + 1)  # Update displayed score
 
 class Game(Widget):
     def __init__(self, **kwargs):
@@ -126,7 +126,7 @@ class Game(Widget):
         self.add_widget(self.obstacle)
         self.add_widget(self.point)  # Add Point widget to the game
         Clock.schedule_interval(self.update, 1 / 60)
-        Clock.schedule_interval(self.background.scroll_textures, 0.1)  # Scroll textures every 0.1 seconds
+        Clock.schedule_interval(self.background.scroll_textures, 1/60)  # Scroll textures every 0.1 seconds
 
     def update(self, dt):
         self.dinosaur.update(dt)

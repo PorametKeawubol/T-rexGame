@@ -7,6 +7,7 @@ from kivy.clock import Clock
 from kivy.graphics import Ellipse, Rectangle
 from kivy.uix.label import Label
 from random import randint
+from kivy.core.audio import SoundLoader
 
 class Background(Widget):
     cloud_texture = ObjectProperty(None)
@@ -153,6 +154,12 @@ class Game(Widget):
 
 class T_RexApp(App):
     def build(self):
+        # Load the background music
+        background_music = SoundLoader.load('sounds/cottagecore-17463.mp3')
+        if background_music:
+            background_music.loop = True
+            background_music.play()
+
         return Game()
 
 if __name__ == '__main__':

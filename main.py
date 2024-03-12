@@ -7,6 +7,7 @@ from kivy.clock import Clock
 from kivy.graphics import Ellipse, Rectangle
 from kivy.uix.label import Label
 from random import randint
+from kivy.graphics import Rectangle
 
 class Background(Widget):
     cloud_texture = ObjectProperty(None)
@@ -71,24 +72,35 @@ class Dinosaur(Image):
         if not self.is_jumping:
             self.is_jumping = True
             self.velocity_y = self.jump_speed
+from kivy.graphics import Rectangle
 
-class Obstacle(Image):
+class Obstacle(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.source = 'images/cactus-big.png'
         self.size_hint = (None, None)
         self.size = (100, 100)
         self.pos_hint = {'center_x': 1, 'center_y': 0.3}
         self.velocity_x = 300
 
+        # Set up cactus image
+        with self.canvas:
+            self.floor_texture = Rectangle(source='images/floor.png', size=self.size, pos=self.pos)
+            self.cactus_texture = Rectangle(source='images/cactus-big.png', size=self.size, pos=(self.x, self.y ))
+
     def update(self, dt):
         self.x -= self.velocity_x * dt
+        self.cactus_texture.pos = (self.x, self.y + 50)  # Update cactus position along with the obstacle
+        self.floor_texture.pos = self.pos  # Update floor position along with the obstacle
         if self.x < -self.width:
             self.reset_position()
 
     def reset_position(self):
         self.x = Window.width + randint(100, 500)
         self.y = 0
+        self.cactus_texture.pos = (self.x, self.y + 100)  # Reset cactus position along with the obstacle
+        self.floor_texture.pos = self.pos  # Reset floor position along with the obstacle
+
+
 
 class Point(Widget):
     score = NumericProperty(0)
@@ -107,6 +119,7 @@ class Game(Widget):
         self.dinosaur = Dinosaur()
         self.obstacle = Obstacle()
         self.point = Point()  # Create an instance of Point
+        self.game_over_label = Label(text='Game Over', font_size=40, pos_hint={'center_x': 0.5, 'center_y': 0.5})
         self.add_widget(self.background)
         self.add_widget(self.dinosaur)
         self.add_widget(self.obstacle)
@@ -122,10 +135,8 @@ class Game(Widget):
     def game_over(self):
         self.remove_widget(self.dinosaur)
         self.remove_widget(self.obstacle)
-        self.add_widget(
-            Image(source='images/game-over.png', size_hint=(None, None), size=(300, 200),
-                  pos_hint={'center_x': 0.5, 'center_y': 0.5}))
-
+        self.add_widget(self.game_over_label)
+        
     def on_touch_down(self, touch):
         self.dinosaur.jump()
 

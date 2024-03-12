@@ -1,12 +1,12 @@
 FloatLayout:
     Background:
-        id:background
+        id: background
         canvas.before:
             Rectangle:
                 size: self.size
-                pos:self.pos
-                source:"bg.jpg"
+                pos: self.pos
+                source: "bg.jpg"
             Rectangle:
                 size: self.width, 140
                 pos: self.pos[0], self.pos[1] + self.height - 140
-                texture: self.cloud_texture
+                texture: background.cloud_texture

@@ -107,12 +107,11 @@ class Point(Widget):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        Clock.schedule_interval(self.update_score, 0.07)  # Update score
+        self.score_increment = Clock.schedule_interval(self.update_score, 0.07)  # Schedule score update
 
     def update_score(self, dt):
-        
-        self.parent.background.score_label.text = str(self.score + 1)  # Update displayed score
-
+        self.score += 1  # Increment the score by 1
+        self.parent.background.score_label.text = str(self.score)  # Update displayed score
 class Game(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

@@ -7,6 +7,7 @@ from kivy.clock import Clock
 from kivy.graphics import Ellipse, Rectangle
 from kivy.uix.label import Label
 from random import randint
+
 class Background(Widget):
     cloud_texture = ObjectProperty(None)
     score_label = ObjectProperty(None)
@@ -31,6 +32,10 @@ class Background(Widget):
                                   pos_hint={'right': 1, 'top': 1})
 
         self.add_widget(self.score_label)  # Add the label to the background widget
+         
+        # Bind the size of the background image to the size of the window
+        Window.bind(size=self.on_window_size_changed)
+
 
     def scroll_textures(self, time_passed):
         # Set up cloud movement
@@ -40,6 +45,10 @@ class Background(Widget):
             self.cloud_1.pos = (Window.width, Window.height * 0.75)
         if self.cloud_2.pos[0] + self.cloud_2.size[0] < 0:
             self.cloud_2.pos = (Window.width, Window.height * 0.6)
+    
+    def on_window_size_changed(self, instance, size):
+        # Update the size of the background image when the window size changes
+        self.bg.size = size
 
 class Dinosaur(Image):
     is_jumping = False
@@ -112,6 +121,7 @@ class Point(Widget):
     def update_score(self, dt):
         self.score += 1  # Increment the score by 1
         self.parent.background.score_label.text = str(self.score)  # Update displayed score
+        
 class Game(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

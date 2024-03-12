@@ -135,6 +135,10 @@ class Game(Widget):
         self.add_widget(self.dinosaur)
         self.add_widget(self.obstacle)
         self.add_widget(self.point)  # Add Point widget to the game
+        self.background_music = SoundLoader.load('sounds/cottagecore-17463.mp3')  # Load background music
+        if self.background_music:
+            self.background_music.loop = True
+            self.background_music.play()  # Start playing background music
         Clock.schedule_interval(self.update, 1 / 60)
         Clock.schedule_interval(self.background.scroll_textures, 1/60)  # Scroll textures every 0.1 seconds
 
@@ -148,18 +152,17 @@ class Game(Widget):
         self.remove_widget(self.dinosaur)
         self.remove_widget(self.obstacle)
         self.add_widget(self.game_over_label)
+        self.background_music.stop()  # Stop playing the current background music
+        # Load and play another song for game over
+        game_over_music = SoundLoader.load('รอมีคนมาใส่')
+        if game_over_music:
+            game_over_music.play()
 
     def on_touch_down(self, touch):
         self.dinosaur.jump()
 
 class T_RexApp(App):
     def build(self):
-        # Load the background music
-        background_music = SoundLoader.load('sounds/cottagecore-17463.mp3')
-        if background_music:
-            background_music.loop = True
-            background_music.play()
-
         return Game()
 
 if __name__ == '__main__':

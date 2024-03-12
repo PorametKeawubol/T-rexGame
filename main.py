@@ -130,7 +130,7 @@ class Game(Widget):
         self.dinosaur = Dinosaur()
         self.obstacle = Obstacle()
         self.point = Point()  # Create an instance of Point
-        self.game_over_label = Label(text='Game Over', font_size=40, pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        # self.game_over_label = Label(text='Game Over', font_size=40, pos_hint={'center_x': 0.5, 'center_y': 0.5})
         self.add_widget(self.background)
         self.add_widget(self.dinosaur)
         self.add_widget(self.obstacle)
@@ -151,11 +151,14 @@ class Game(Widget):
     def game_over(self):
         self.remove_widget(self.dinosaur)
         self.remove_widget(self.obstacle)
-        self.add_widget(self.game_over_label)
+        # self.add_widget(self.game_over_label)
+        self.add_widget(
+            Label(text='Game Over', font_size=50, pos_hint={'center_x': 0.5, 'center_y': 0.5}))
         self.background_music.stop()  # Stop playing the current background music
         # Load and play another song for game over
-        game_over_music = SoundLoader.load('รอมีคนมาใส่')
+        game_over_music = SoundLoader.load('sounds/NeverGiveUp.mp3')
         if game_over_music:
+            game_over_music.volume = 0.2  # Set the volume to 20%
             game_over_music.play()
 
     def on_touch_down(self, touch):

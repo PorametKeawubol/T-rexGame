@@ -120,14 +120,22 @@ class Obstacle(Widget):
 
 class Point(Widget):
     score = NumericProperty(0)
+    game_over = False  # Add a flag to track game over state
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.score_increment = Clock.schedule_interval(self.update_score, 0.07)  # Schedule score update
 
     def update_score(self, dt):
-        self.score += 1  # Increment the score by 1
-        self.parent.background.score_label.text = str(self.score)  # Update displayed score
+        if not self.game_over:  # Check if the game is not over
+            self.score += 1  # Increment the score by 1
+            self.parent.background.score_label.text = str(self.score)  # Update displayed score
+
+    def stop_score_increment(self):
+        Clock.unschedule(self.update_score)  # Stop incrementing score
+
+    def start_score_increment(self):
+        self.score_increment = Clock.schedule_interval(self.update_score, 0.07)  # Resume score incrementing
         
 class Game(Widget):
     def __init__(self, **kwargs):
@@ -141,6 +149,7 @@ class Game(Widget):
         self.add_widget(self.dinosaur)
         self.add_widget(self.obstacle)
         self.add_widget(self.point) 
+        self.point.game_over = False  # Initialize the game_over flag
          # Add Point widget to the game
         self.background_music = SoundLoader.load('sounds/cottagecore-17463.mp3')  # Load background music
         if self.background_music:
@@ -176,6 +185,8 @@ class Game(Widget):
             if game_over_music:
                 game_over_music.volume = 0.2  # Set the volume to 20%
                 game_over_music.play()
+            self.point.game_over = True  # Set game_over flag to True
+            self.point.stop_score_increment()  # Stop score incrementation
 
     def on_touch_down(self, touch):
         if not self.game_over:  # Check if the game is not over

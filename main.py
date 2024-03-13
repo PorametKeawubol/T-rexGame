@@ -32,12 +32,16 @@ class Background(Widget):
         # Create label for displaying score
         self.score_label = Label(text='0', color=(0, 0, 0, 1), font_size='24sp', size_hint=(None, None), size=(100, 50),
                                   pos=(Window.width - 100, Window.height - 50))
+        self.bind(pos=self.update_score_label_position)
 
         self.add_widget(self.score_label)  # Add the label to the background widget
-         
+
         # Bind the size of the background image to the size of the window
         Window.bind(size=self.on_window_size_changed)
 
+    def update_score_label_position(self, *args):
+        # Update the position of the score label
+        self.score_label.pos = (Window.width - self.score_label.width - 10, Window.height - self.score_label.height - 10)
 
     def scroll_textures(self, time_passed):
         # Set up cloud movement
@@ -47,10 +51,11 @@ class Background(Widget):
             self.cloud_1.pos = (Window.width, Window.height * 0.75)
         if self.cloud_2.pos[0] + self.cloud_2.size[0] < 0:
             self.cloud_2.pos = (Window.width, Window.height * 0.6)
-    
+
     def on_window_size_changed(self, instance, size):
         # Update the size of the background image when the window size changes
         self.bg.size = size
+        self.update_score_label_position()  # Call the method to update the score label position
 
 class Dinosaur(Image):
     is_jumping = False
@@ -135,7 +140,8 @@ class Game(Widget):
         self.add_widget(self.background)
         self.add_widget(self.dinosaur)
         self.add_widget(self.obstacle)
-        self.add_widget(self.point)  # Add Point widget to the game
+        self.add_widget(self.point) 
+         # Add Point widget to the game
         self.background_music = SoundLoader.load('sounds/cottagecore-17463.mp3')  # Load background music
         if self.background_music:
             self.background_music.loop = True

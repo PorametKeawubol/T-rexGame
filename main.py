@@ -1,3 +1,4 @@
+
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.properties import ObjectProperty, NumericProperty
@@ -30,7 +31,7 @@ class Background(Widget):
 
         # Create label for displaying score
         self.score_label = Label(text='0', color=(0, 0, 0, 1), font_size='24sp', size_hint=(None, None), size=(100, 50),
-                                  pos_hint={'right': 1, 'top': 1})
+                                  pos=(Window.width - 100, Window.height - 50))
 
         self.add_widget(self.score_label)  # Add the label to the background widget
          

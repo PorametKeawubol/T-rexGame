@@ -139,30 +139,50 @@ class Game(Widget):
         if self.background_music:
             self.background_music.loop = True
             self.background_music.play()  # Start playing background music
+        self.game_over = False  # Initialize game over state
+        self.game_clock = None  # Initialize game clock reference
         Clock.schedule_interval(self.update, 1 / 60)
         Clock.schedule_interval(self.background.scroll_textures, 1/60)  # Scroll textures every 0.1 seconds
 
     def update(self, dt):
-        self.dinosaur.update(dt)
-        self.obstacle.update(dt)
-        if self.dinosaur.collide_widget(self.obstacle):
-            self.game_over()
+        if not self.game_over:  # Check if the game is not over
+            self.dinosaur.update(dt)
+            self.obstacle.update(dt)
+            if self.dinosaur.collide_widget(self.obstacle):
+                self.game_over = True
+                self.game_over_actions()
 
-    def game_over(self):
-        self.remove_widget(self.dinosaur)
-        self.remove_widget(self.obstacle)
-        # self.add_widget(self.game_over_label)
-        self.add_widget(
-            Label(text='Game Over', font_size=50, pos_hint={'center_x': 0.5, 'center_y': 0.5}))
-        self.background_music.stop()  # Stop playing the current background music
-        # Load and play another song for game over
-        game_over_music = SoundLoader.load('sounds/NeverGiveUp.mp3')
-        if game_over_music:
-            game_over_music.volume = 0.2  # Set the volume to 20%
-            game_over_music.play()
+    def game_over_actions(self):
+        if not self.game_clock:
+            try:
+                Clock.unschedule(self.update)  # Stop the game update loop
+                Clock.unschedule(self.background.scroll_textures)  # Stop scrolling textures
+            except:
+                pass  # Handle case when clock is already unscheduled
+            self.remove_widget(self.dinosaur)
+            self.remove_widget(self.obstacle)
+            self.add_widget(
+                Label(text='Game Over', font_size=50, pos_hint={'center_x': 0.5, 'center_y': 0.5}))
+            self.background_music.stop()  # Stop playing the current background music
+            # Load and play another song for game over
+            game_over_music = SoundLoader.load('sounds/NeverGiveUp.mp3')
+            if game_over_music:
+                game_over_music.volume = 0.2  # Set the volume to 20%
+                game_over_music.play()
 
     def on_touch_down(self, touch):
-        self.dinosaur.jump()
+        if not self.game_over:  # Check if the game is not over
+            self.dinosaur.jump()
+
+    def stop_game(self):
+        # Stop the game completely
+        if not self.game_clock:
+            try:
+                Clock.unschedule(self.update)  # Stop the game update loop
+                Clock.unschedule(self.background.scroll_textures)  # Stop scrolling textures
+            except:
+                pass  # Handle case when clock is already unscheduled
+            self.game_over = True
 
 class T_RexApp(App):
     def build(self):

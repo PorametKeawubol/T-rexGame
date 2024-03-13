@@ -45,17 +45,20 @@ class Background(Widget):
 
     def scroll_textures(self, time_passed):
         # Set up cloud movement
-        self.cloud_1.pos = (self.cloud_1.pos[0] - time_passed * 50, self.cloud_1.pos[1])
-        self.cloud_2.pos = (self.cloud_2.pos[0] - time_passed * 80, self.cloud_2.pos[1])
-        if self.cloud_1.pos[0] + self.cloud_1.size[0] < 0:
-            self.cloud_1.pos = (Window.width, Window.height * 0.75)
-        if self.cloud_2.pos[0] + self.cloud_2.size[0] < 0:
-            self.cloud_2.pos = (Window.width, Window.height * 0.6)
+        if hasattr(self, 'cloud_1') and hasattr(self, 'cloud_2'):  # Check if clouds exist
+            self.cloud_1.pos = (self.cloud_1.pos[0] - time_passed * 50, self.cloud_1.pos[1])
+            self.cloud_2.pos = (self.cloud_2.pos[0] - time_passed * 80, self.cloud_2.pos[1])
+            if self.cloud_1.pos[0] + self.cloud_1.size[0] < 0:
+                self.cloud_1.pos = (Window.width, Window.height * 0.75)
+            if self.cloud_2.pos[0] + self.cloud_2.size[0] < 0:
+                self.cloud_2.pos = (Window.width, Window.height * 0.6)
 
     def on_window_size_changed(self, instance, size):
         # Update the size of the background image when the window size changes
         self.bg.size = size
         self.update_score_label_position()  # Call the method to update the score label position
+
+
 
 class Dinosaur(Image):
     is_jumping = False
@@ -144,13 +147,11 @@ class Game(Widget):
         self.dinosaur = Dinosaur()
         self.obstacle = Obstacle()
         self.point = Point()  # Create an instance of Point
-        # self.game_over_label = Label(text='Game Over', font_size=40, pos_hint={'center_x': 0.5, 'center_y': 0.5})
         self.add_widget(self.background)
         self.add_widget(self.dinosaur)
         self.add_widget(self.obstacle)
         self.add_widget(self.point) 
         self.point.game_over = False  # Initialize the game_over flag
-         # Add Point widget to the game
         self.background_music = SoundLoader.load('sounds/cottagecore-17463.mp3')  # Load background music
         if self.background_music:
             self.background_music.loop = True
@@ -159,6 +160,7 @@ class Game(Widget):
         self.game_clock = None  # Initialize game clock reference
         Clock.schedule_interval(self.update, 1 / 60)
         Clock.schedule_interval(self.background.scroll_textures, 1/60)  # Scroll textures every 0.1 seconds
+
 
     def update(self, dt):
         if not self.game_over:  # Check if the game is not over

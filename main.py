@@ -221,9 +221,6 @@ class Game(Widget):
                 Clock.unschedule(self.background.scroll_textures)  # Stop scrolling textures
             except:
                 pass  # Handle case when clock is already unscheduled
-            self.remove_widget(self.dinosaur)
-            self.remove_widget(self.obstacle)
-            self.remove_widget(self.floor)
             self.add_widget(
                 Label(text='Game Over', font_size=50, pos_hint={'center_x': 0.5, 'center_y': 0.5}))
             self.background_music.stop()  # Stop playing the current background music

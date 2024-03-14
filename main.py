@@ -65,10 +65,12 @@ class Dinosaur(Image):
     jump_height = NumericProperty(200)
     jump_speed = NumericProperty(300)
     gravity = NumericProperty(600)
+    jump_sound = SoundLoader.load('sounds/dino_jump.wav')  # Load the jump sound effect
+
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.source = 'images/image01.jpg'
+        self.source = 'images/t-rex.png'
         self.size_hint = (None, None)
         self.size = (100, 100)
         self.pos_hint = {'center_x': 0.1, 'center_y': 0.3}
@@ -94,6 +96,9 @@ class Dinosaur(Image):
         if not self.is_jumping:
             self.is_jumping = True
             self.velocity_y = self.jump_speed
+            if self.jump_sound:
+                self.jump_sound.volume = 1  # Adjust the volume of the jump sound effect
+                self.jump_sound.play()  # Play the jump sound effect
 
 class Obstacle(Widget):
     def __init__(self, **kwargs):

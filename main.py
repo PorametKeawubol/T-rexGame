@@ -244,7 +244,9 @@ class Game(Widget):
             except:
                 pass  # Handle case when clock is already unscheduled
             self.add_widget(
-                Label(text='Game Over', font_size=50, pos_hint={'center_x': 0.5, 'center_y': 0.5}))
+    Label(text='Game Over', font_size=50, pos=(Window.width/2, Window.height/2))
+)
+
             self.background_music.stop()  # Stop playing the current background music
             # Load and play another song for game over
             

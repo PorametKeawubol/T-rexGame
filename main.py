@@ -62,7 +62,7 @@ class Background(Widget):
 
 class Dinosaur(Image):
     is_jumping = False
-    jump_height = NumericProperty(200)
+    jump_height = NumericProperty(250)
     jump_speed = NumericProperty(300)
     gravity = NumericProperty(600)
     jump_sound = SoundLoader.load('sounds/dino_jump.wav')  # Load the jump sound effect
@@ -70,7 +70,7 @@ class Dinosaur(Image):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.source = 'images/t-rex.png'
+        self.source = 'images/image01.jpg'
         self.size_hint = (None, None)
         self.size = (100, 100)
         self.pos_hint = {'center_x': 0.1, 'center_y': 0.3}
@@ -87,11 +87,15 @@ class Dinosaur(Image):
             self.velocity_y -= self.gravity * dt
             self.y += self.velocity_y * dt
 
+        if self.y <= self.parent.floor.floor_height -38:  # ปรับเงื่อนไขเพิ่มเติมนี้
+            self.velocity_y = 0
+            self.y = self.parent.floor.floor_height -38
+            self.is_jumping = False
+
         if self.y <= 0:
             self.velocity_y = 0
             self.y = 0
             self.is_jumping = False
-
     def jump(self):
         if not self.is_jumping:
             self.is_jumping = True
@@ -202,7 +206,8 @@ class Game(Widget):
         self.game_over = False  # Initialize game over state
         self.game_clock = None  # Initialize game clock reference
         Clock.schedule_interval(self.update, 1 / 60)
-        Clock.schedule_interval(self.background.scroll_textures, 1/60)  # Scroll textures every 0.1 seconds
+        Clock.schedule_interval(self.background.scroll_textures, 1/60)
+          # Scroll textures every 0.1 seconds
 
 
     def update(self, dt):

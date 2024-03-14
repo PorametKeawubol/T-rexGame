@@ -100,6 +100,40 @@ class Dinosaur(Image):
                 self.jump_sound.volume = 1  # Adjust the volume of the jump sound effect
                 self.jump_sound.play()  # Play the jump sound effect
 
+class Floor(Widget):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.size_hint = (None, None)
+        self.floor_height = 100  # Define the height of the floor
+        self.velocity_x = 300
+
+        # Load the floor texture
+        floor_texture_source = 'images/floor.png'
+        floor_texture_size = (200, self.floor_height)  # Define the size of each floor texture
+
+        # Create a list to hold floor textures
+        self.floor_textures = []
+
+        # Calculate the number of floor textures needed to cover the screen width
+        num_textures = (Window.width // floor_texture_size[0]) + 2  # Add 2 textures for scrolling effect
+
+        # Create and position floor textures
+        for i in range(num_textures):
+            floor_texture = Rectangle(source=floor_texture_source, size=floor_texture_size,
+                                      pos=(i * floor_texture_size[0], 0))
+            self.floor_textures.append(floor_texture)
+            self.canvas.add(floor_texture)
+
+    def update(self, dt):
+        # Move floor textures horizontally
+        for texture in self.floor_textures:
+            texture.pos = (texture.pos[0] - self.velocity_x * dt, texture.pos[1])
+
+            # Check if the texture has moved off-screen to the left
+            if texture.pos[0] + texture.size[0] < 0:
+                # Move the texture to the right of the screen
+                texture.pos = (texture.pos[0] + len(self.floor_textures) * texture.size[0], texture.pos[1])
+
 class Obstacle(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -110,21 +144,18 @@ class Obstacle(Widget):
 
         # Set up cactus image
         with self.canvas:
-            self.floor_texture = Rectangle(source='images/floor.png', size=self.size, pos=self.pos)
             self.cactus_texture = Rectangle(source='images/cactus-big.png', size=self.size, pos=(self.x, self.y))
 
     def update(self, dt):
         self.x -= self.velocity_x * dt
-        self.cactus_texture.pos = (self.x, self.y + 50)  # Update cactus position along with the obstacle
-        self.floor_texture.pos = self.pos  # Update floor position along with the obstacle
+        self.cactus_texture.pos = (self.x, self.y + 50)  # Update cactus position
         if self.x < -self.width:
             self.reset_position()
 
     def reset_position(self):
         self.x = Window.width + randint(100, 500)
         self.y = 0
-        self.cactus_texture.pos = (self.x, self.y + 100)  # Reset cactus position along with the obstacle
-        self.floor_texture.pos = self.pos  # Reset floor position along with the obstacle
+        self.cactus_texture.pos = (self.x, self.y + 100)  # Reset cactus position
 
 class Point(Widget):
     score = NumericProperty(0)
@@ -156,10 +187,12 @@ class Game(Widget):
         self.background = Background()
         self.dinosaur = Dinosaur()
         self.obstacle = Obstacle()
+        self.floor = Floor()  # Create an instance of Floor
         self.point = Point()  # Create an instance of Point
         self.add_widget(self.background)
         self.add_widget(self.dinosaur)
         self.add_widget(self.obstacle)
+        self.add_widget(self.floor)  # Add floor to the game
         self.add_widget(self.point) 
         self.point.game_over = False  # Initialize the game_over flag
         self.background_music = SoundLoader.load('sounds/cottagecore-17463.mp3')  # Load background music
@@ -176,6 +209,7 @@ class Game(Widget):
         if not self.game_over:  # Check if the game is not over
             self.dinosaur.update(dt)
             self.obstacle.update(dt)
+            self.floor.update(dt)  # Update floor position
             if self.dinosaur.collide_widget(self.obstacle):
                 self.game_over = True
                 self.game_over_actions()
@@ -189,6 +223,7 @@ class Game(Widget):
                 pass  # Handle case when clock is already unscheduled
             self.remove_widget(self.dinosaur)
             self.remove_widget(self.obstacle)
+            self.remove_widget(self.floor)
             self.add_widget(
                 Label(text='Game Over', font_size=50, pos_hint={'center_x': 0.5, 'center_y': 0.5}))
             self.background_music.stop()  # Stop playing the current background music

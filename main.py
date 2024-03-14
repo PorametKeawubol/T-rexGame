@@ -9,6 +9,7 @@ from kivy.graphics import Ellipse, Rectangle
 from kivy.uix.label import Label
 from random import randint
 from kivy.core.audio import SoundLoader
+from kivy.uix.button import Button
 
 class Background(Widget):
     cloud_texture = ObjectProperty(None)
@@ -87,7 +88,7 @@ class Dinosaur(Image):
             self.velocity_y -= self.gravity * dt
             self.y += self.velocity_y * dt
 
-        if self.y <= self.parent.floor.floor_height -38:  # ปรับเงื่อนไขเพิ่มเติมนี้
+        if self.y <= self.parent.floor.floor_height -38:  
             self.velocity_y = 0
             self.y = self.parent.floor.floor_height -38
             self.is_jumping = False
@@ -209,6 +210,22 @@ class Game(Widget):
         Clock.schedule_interval(self.background.scroll_textures, 1/60)
           # Scroll textures every 0.1 seconds
 
+        # Create pause button
+        self.pause_button = Button(text="Pause", size_hint=(None, None), size=(100, 50),
+                                   pos=(10, Window.height - 60))
+        self.pause_button.bind(on_press=self.toggle_pause)
+        self.add_widget(self.pause_button)
+
+    def toggle_pause(self, instance):
+        if self.game_clock:  # If the game is running
+            Clock.unschedule(self.update)  # Stop the game update loop
+            Clock.unschedule(self.background.scroll_textures)  # Stop scrolling textures
+            self.game_clock = None  # Set game clock to None
+            self.pause_button.text = "Resume"
+        else:  # If the game is paused
+            self.game_clock = Clock.schedule_interval(self.update, 1 / 60)  # Resume game update loop
+            Clock.schedule_interval(self.background.scroll_textures, 1/60)  # Resume scrolling textures
+            self.pause_button.text = "Pause"
 
     def update(self, dt):
         if not self.game_over:  # Check if the game is not over
@@ -230,6 +247,7 @@ class Game(Widget):
                 Label(text='Game Over', font_size=50, pos_hint={'center_x': 0.5, 'center_y': 0.5}))
             self.background_music.stop()  # Stop playing the current background music
             # Load and play another song for game over
+            
             game_over_music = SoundLoader.load('sounds/NeverGiveUp.mp3')
             if game_over_music:
                 game_over_music.volume = 0.2  # Set the volume to 20%
@@ -240,6 +258,8 @@ class Game(Widget):
     def on_touch_down(self, touch):
         if not self.game_over:  # Check if the game is not over
             self.dinosaur.jump()
+        if self.pause_button.collide_point(*touch.pos):  # Check if the touch is on the pause button
+            self.toggle_pause(self.pause_button)
 
     def stop_game(self):
         # Stop the game completely

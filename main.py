@@ -129,6 +129,7 @@ class Obstacle(Widget):
 class Point(Widget):
     score = NumericProperty(0)
     game_over = False  # Add a flag to track game over state
+    checkpoint_sound = SoundLoader.load('sounds/dino_checkpoint.wav')  # Load the checkpoint sound effect
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -138,6 +139,10 @@ class Point(Widget):
         if not self.game_over:  # Check if the game is not over
             self.score += 1  # Increment the score by 1
             self.parent.background.score_label.text = str(self.score)  # Update displayed score
+            # Check if the score is a multiple of 100 and has '00' at the end
+            if self.score % 100 == 0 and self.score % 1000 != 0:
+                if self.checkpoint_sound:
+                    self.checkpoint_sound.play()  # Play the checkpoint sound effect
 
     def stop_score_increment(self):
         Clock.unschedule(self.update_score)  # Stop incrementing score

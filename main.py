@@ -208,7 +208,8 @@ class Game(Widget):
         self.background_music = SoundLoader.load('sounds/cottagecore-17463.mp3')  # Load background music
         if self.background_music:
             self.background_music.loop = True
-            self.background_music.play()  # Start playing background music
+            self.background_music.play() 
+        self.paused = False  # Start playing background music
         self.game_over = False  # Initialize game over state
         self.game_clock = None  # Initialize game clock reference
         Clock.schedule_interval(self.update, 1 / 60)
@@ -222,16 +223,17 @@ class Game(Widget):
         self.add_widget(self.pause_image)
 
     def toggle_pause(self, instance):
-        if self.game_clock:  # If the game is running
-            Clock.unschedule(self.update)  # Stop the game update loop
-            Clock.unschedule(self.background.scroll_textures)  # Stop scrolling textures
-            self.game_clock = None  # Set game clock to None
-            self.pause_image.source = "images/RESUME.png"  # Change the image source to RESUME
-            self.dinosaur.is_jumping = False  # Ensure dinosaur is not jumping while paused
-        else:  # If the game is paused
-            self.game_clock = Clock.schedule_interval(self.update, 1 / 60)  # Resume game update loop
-            Clock.schedule_interval(self.background.scroll_textures, 1/60)  # Resume scrolling textures
-            self.pause_image.source = "images/PAUSE.png"  
+        if self.paused:  # ถ้าเกมถูก pause
+            Clock.schedule_interval(self.update, 1 / 60)  # ทำการ resume เกม
+            Clock.schedule_interval(self.background.scroll_textures, 1/60)  # resume scrolling textures
+            self.paused = False  # อัปเดตสถานะเป็นไม่ pause
+            self.pause_image.source = "images/PAUSE.png"  # เปลี่ยนภาพของปุ่มเป็น PAUSE
+        else:  # ถ้าเกมไม่ได้ถูก pause
+            Clock.unschedule(self.update)  # หยุดการอัปเดตเกม
+            Clock.unschedule(self.background.scroll_textures)  # หยุดการ scroll textures
+            self.paused = True  # อัปเดตสถานะเป็น pause
+            self.pause_image.source = "images/RESUME.png"  
+         
 
     def update(self, dt):
         if not self.game_over:  # Check if the game is not over
@@ -265,11 +267,12 @@ class Game(Widget):
             self.point.stop_score_increment()  # Stop score incrementation
 
     def on_touch_down(self, touch):
-        if not self.game_over:  # Check if the game is not over
-            if self.pause_image.collide_point(*touch.pos):  # Check if the touch is on the pause image
-                self.toggle_pause(self.pause_image)
-            else:  # If the touch is not on the pause image, handle dinosaur jump
-                self.dinosaur_jump(touch)
+        if not self.game_over:  # ตรวจสอบว่าเกมยังไม่จบ
+            if self.pause_image.collide_point(*touch.pos):  # ตรวจสอบว่าที่คลิกอยู่บนปุ่ม pause/resume
+                self.toggle_pause(self.pause_image)  # เรียกเมธอด toggle_pause เพื่อ pause หรือ resume เกม
+            else:  # ถ้าไม่ได้คลิกที่ปุ่ม pause/resume
+                self.dinosaur_jump(touch)  # เรียกเมธอดให้ดิโนเสาร์กระโดด
+
 
     def dinosaur_jump(self, touch):
         self.dinosaur.jump()

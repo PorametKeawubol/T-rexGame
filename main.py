@@ -210,22 +210,23 @@ class Game(Widget):
         Clock.schedule_interval(self.background.scroll_textures, 1/60)
           # Scroll textures every 0.1 seconds
 
-        # Create pause button
-        self.pause_button = Button(text="Pause", size_hint=(None, None), size=(100, 50),
-                                   pos=(10, Window.height - 60))
-        self.pause_button.bind(on_press=self.toggle_pause)
-        self.add_widget(self.pause_button)
+        # Create pause button as an image
+        self.pause_image = Image(source="images/PAUSE.png", size_hint=(None, None), size=(100, 50),
+                                 pos=(10, Window.height - 60))
+        self.pause_image.bind(on_press=self.toggle_pause)  # Bind the image to the toggle_pause method
+        self.add_widget(self.pause_image)
 
     def toggle_pause(self, instance):
         if self.game_clock:  # If the game is running
             Clock.unschedule(self.update)  # Stop the game update loop
             Clock.unschedule(self.background.scroll_textures)  # Stop scrolling textures
             self.game_clock = None  # Set game clock to None
-            self.pause_button.text = "Resume"
+            self.pause_image.source = "images/RESUME.png"  # Change the image source to RESUME
+            self.dinosaur.is_jumping = False  # Ensure dinosaur is not jumping while paused
         else:  # If the game is paused
             self.game_clock = Clock.schedule_interval(self.update, 1 / 60)  # Resume game update loop
             Clock.schedule_interval(self.background.scroll_textures, 1/60)  # Resume scrolling textures
-            self.pause_button.text = "Pause"
+            self.pause_image.source = "images/PAUSE.png"  
 
     def update(self, dt):
         if not self.game_over:  # Check if the game is not over
@@ -243,9 +244,10 @@ class Game(Widget):
                 Clock.unschedule(self.background.scroll_textures)  # Stop scrolling textures
             except:
                 pass  # Handle case when clock is already unscheduled
-            self.add_widget(
-    Label(text='Game Over', font_size=50, pos=(Window.width/2, Window.height/2))
-)
+            self.game_over_image = Image(source='images/GAME-OVER.png', size_hint=(None, None), size=(400, 200),
+                             pos=(Window.width / 2 - 200, Window.height / 2 + 25))
+            self.add_widget(self.game_over_image)
+
 
             self.background_music.stop()  # Stop playing the current background music
             # Load and play another song for game over
@@ -259,9 +261,13 @@ class Game(Widget):
 
     def on_touch_down(self, touch):
         if not self.game_over:  # Check if the game is not over
-            self.dinosaur.jump()
-        if self.pause_button.collide_point(*touch.pos):  # Check if the touch is on the pause button
-            self.toggle_pause(self.pause_button)
+            if self.pause_image.collide_point(*touch.pos):  # Check if the touch is on the pause image
+                self.toggle_pause(self.pause_image)
+            else:  # If the touch is not on the pause image, handle dinosaur jump
+                self.dinosaur_jump(touch)
+
+    def dinosaur_jump(self, touch):
+        self.dinosaur.jump()
 
     def stop_game(self):
         # Stop the game completely

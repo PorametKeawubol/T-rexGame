@@ -1,6 +1,4 @@
-# Hello, this is T-rex Game
+# Hello, this is T-rex Game By
 
-## By
-
-> 6610110542 Netiwut Gategumpon
+> 6610110542 Netiwut Gategumpon \
 > 6610110554 Poramet Keawubol

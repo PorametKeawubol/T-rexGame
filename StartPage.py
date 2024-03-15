@@ -1,33 +1,33 @@
-from kivy.app import App
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.button import Button
-
+from kivy.core.window import Window
+from kivy.uix.image import Image
 
 class StartPage(AnchorLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        
+        # Set up the background
+        self.background = Image(source='images/background.png', allow_stretch=True, keep_ratio=False)
+        self.add_widget(self.background)
+        
+        # Create a layout to center the button
+        layout = AnchorLayout()
+        layout.size_hint = (None, None)
+        layout.size = (Window.width, Window.height)
 
-        self.padding = 20
-        self.spacing = 20
-        self.background_color = (0.5, 0.5, 0.5, 1)  # Gray background color
-
-        play_button = Button()
-        play_button.size_hint = (None, None)
-        play_button.size = (200, 100)
-        play_button.background_normal = 'images/PLAY.png'
-        play_button.background_down = 'images/PLAY.png'
+        # Create the play button
+        play_button = Button(background_normal='images/PLAY.png', size_hint=(None, None), size=(200, 100))
         play_button.bind(on_press=self.on_play_button_press)
-
-        self.add_widget(play_button)
+        layout.add_widget(play_button)
+        
+        self.add_widget(layout)
 
     def on_play_button_press(self, instance):
-        print("Play button pressed!")
+        # Import Game class here to avoid circular import
+        from main import Game
 
-
-class MyApp(App):
-    def build(self):
-        return StartPage()
-
-
-if __name__ == '__main__':
-    MyApp().run()
+        # Switch to the game page when the button is pressed
+        game_page = Game()
+        self.parent.add_widget(game_page)
+        self.parent.remove_widget(self)

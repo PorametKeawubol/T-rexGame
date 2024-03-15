@@ -1,4 +1,3 @@
-
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.properties import ObjectProperty, NumericProperty
@@ -10,6 +9,8 @@ from kivy.uix.label import Label
 from random import randint
 from kivy.core.audio import SoundLoader
 from kivy.uix.button import Button
+from StartPage import StartPage
+from kivy.uix.anchorlayout import AnchorLayout
 
 class Background(Widget):
     cloud_texture = ObjectProperty(None)
@@ -286,7 +287,7 @@ class Game(Widget):
 
 class T_RexApp(App):
     def build(self):
-        return Game()
+        return StartPage()
 
 if __name__ == '__main__':
     T_RexApp().run()

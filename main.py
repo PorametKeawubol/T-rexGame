@@ -228,12 +228,15 @@ class Game(Widget):
             Clock.schedule_interval(self.update, 1 / 60)  # ทำการ resume เกม
             Clock.schedule_interval(self.background.scroll_textures, 1/60)  # resume scrolling textures
             self.paused = False  # อัปเดตสถานะเป็นไม่ pause
-            self.pause_image.source = "images/PAUSE.png"  # เปลี่ยนภาพของปุ่มเป็น PAUSE
+            self.pause_image.source = "images/PAUSE.png"
+            self.point.start_score_increment()  
+           # เปลี่ยนภาพของปุ่มเป็น PAUSE
         else:  # ถ้าเกมไม่ได้ถูก pause
             Clock.unschedule(self.update)  # หยุดการอัปเดตเกม
             Clock.unschedule(self.background.scroll_textures)  # หยุดการ scroll textures
             self.paused = True  # อัปเดตสถานะเป็น pause
-            self.pause_image.source = "images/RESUME.png"  
+            self.pause_image.source = "images/RESUME.png"
+            self.point.stop_score_increment()  
          
 
     def update(self, dt):

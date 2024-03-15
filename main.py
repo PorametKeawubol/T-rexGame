@@ -72,7 +72,7 @@ class Dinosaur(Image):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.source = 'images/image01.jpg'
+        self.source = 'images/t-rex.png'
         self.size_hint = (None, None)
         self.size = (100, 100)
         self.pos_hint = {'center_x': 0.1, 'center_y': 0.3}

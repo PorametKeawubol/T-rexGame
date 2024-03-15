@@ -175,11 +175,16 @@ class Point(Widget):
         if not self.game_over:  # Check if the game is not over
             self.score += 1  # Increment the score by 1
             self.parent.background.score_label.text = str(self.score)  # Update displayed score
-            # Check if the score is a multiple of 100 and has '00' at the end
+
+        # Check if the score is a multiple of 100 and has '00' at the end
             if self.score % 100 == 0 and self.score % 1000 != 0:
                 if self.checkpoint_sound:
                     self.checkpoint_sound.play()  # Play the checkpoint sound effect
 
+            # Increase game speed slightly when score reaches multiples of 100
+                self.parent.floor.velocity_x += 50 # Increase floor velocity
+                self.parent.dinosaur.jump_speed += 50
+                self.parent.obstacle.velocity_x += 50
     def stop_score_increment(self):
         Clock.unschedule(self.update_score)  # Stop incrementing score
 

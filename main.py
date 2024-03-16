@@ -79,6 +79,7 @@ class Dinosaur(Image):
         self.size = (100, 100)
         self.pos_hint = {'center_x': 0.1, 'center_y': 0.3}
         self.velocity_y = 0
+        self.center_x = Window.width / 3 
 
     def update(self, dt):
         if self.is_jumping:

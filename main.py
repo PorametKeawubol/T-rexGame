@@ -34,8 +34,8 @@ class Background(Widget):
             self.cloud_2 = Rectangle(texture=Image(source='images/cloud-small.png').texture, pos=(Window.width * 0.5, Window.height * 0.6), size=(160, 90))
 
         # Create label for displaying score
-        self.score_label = Label(text='0', color=(0, 0, 0, 1), font_size='24sp', size_hint=(None, None), size=(100, 50),
-                                  pos=(Window.width - 100, Window.height - 50))
+        self.score_label = Label(text='0', color=(0, 0, 0, 1), font_size='30sp', size_hint=(None, None), size=(125, 66),
+                                  pos=(Window.width - 100, Window.height - 80))
         self.bind(pos=self.update_score_label_position)
 
         self.add_widget(self.score_label)  # Add the label to the background widget
@@ -220,8 +220,8 @@ class Game(Widget):
           # Scroll textures every 0.1 seconds
 
         # Create pause button as an image
-        self.pause_image = Image(source="images/PAUSE.png", size_hint=(None, None), size=(100, 50),
-                                 pos=(10, Window.height - 60))
+        self.pause_image = Image(source="images/PAUSE.png", size_hint=(None, None), size=(150, 75),
+                                 pos=(10, Window.height -80))
         self.pause_image.bind(on_press=self.toggle_pause)  # Bind the image to the toggle_pause method
         self.add_widget(self.pause_image)
 

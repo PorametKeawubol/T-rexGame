@@ -11,6 +11,8 @@ from kivy.core.audio import SoundLoader
 from kivy.uix.button import Button
 from StartPage import StartPage
 from kivy.uix.anchorlayout import AnchorLayout
+from kivy.core.image import Image as CoreImage
+
 
 class Background(Widget):
     cloud_texture = ObjectProperty(None)
@@ -27,9 +29,9 @@ class Background(Widget):
             # Draw a rectangle for the background image
             self.bg = Rectangle(source='sky.png', size=Window.size, pos=self.pos)
 
-            # Draw clouds using Ellipse
-            self.cloud_1 = Ellipse(texture=Image(source='images/cloud-big.png').texture, pos=(Window.width, Window.height * 0.75), size=(200, 100))
-            self.cloud_2 = Ellipse(texture=Image(source='images/cloud-small.png').texture, pos=(Window.width * 0.5, Window.height * 0.6), size=(150, 80))
+            # Draw clouds using Rectangles 
+            self.cloud_1 = Rectangle(texture=Image(source='images/cloud-big.png').texture, pos=(Window.width, Window.height * 0.75), size=(220, 140))
+            self.cloud_2 = Rectangle(texture=Image(source='images/cloud-small.png').texture, pos=(Window.width * 0.5, Window.height * 0.6), size=(160, 90))
 
         # Create label for displaying score
         self.score_label = Label(text='0', color=(0, 0, 0, 1), font_size='24sp', size_hint=(None, None), size=(100, 50),

@@ -126,7 +126,7 @@ class Floor(Widget):
         self.floor_textures = []
 
         # Calculate the number of floor textures needed to cover the screen width
-        num_textures = (Window.width // floor_texture_size[0]) + 2  # Add 2 textures for scrolling effect
+        num_textures = (Window.width // floor_texture_size[0]) + 8  # Add 2 textures for scrolling effect
 
         # Create and position floor textures
         for i in range(num_textures):

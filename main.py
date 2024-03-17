@@ -203,7 +203,19 @@ class Game(Widget):
         # Initialize game state
         self.game_over = False
         self.paused = False
+        self.game_clock = None
+        self.background = None
+        self.dinosaur = None
+        self.obstacle = None
+        self.floor = None
+        self.point = None
+        self.background_music = None
+        self.pause_image = None
+        self.game_over_image = None
+        self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
+        self._keyboard.bind(on_key_down=self.on_keyboard_down)
         self.initialize_game()
+        
 
     def initialize_game(self):
         # Reset game state
@@ -273,6 +285,7 @@ class Game(Widget):
                 game_over_music.play()
             self.point.game_over = True
             self.point.stop_score_increment()
+            
     def on_touch_down(self, touch):
         if not self.game_over:  # ตรวจสอบว่าเกมยังไม่จบ
             if self.pause_image.collide_point(*touch.pos):  # ตรวจสอบว่าที่คลิกอยู่บนปุ่ม pause/resume
@@ -280,7 +293,7 @@ class Game(Widget):
             else:  # ถ้าไม่ได้คลิกที่ปุ่ม pause/resume
                 self.dinosaur_jump(touch)  # เรียกเมธอดให้ดิโนเสาร์กระโดด
     
-    def dinosaur_jump(self, touch):
+    def dinosaur_jump(self, touch=None):
         if self.dinosaur.y == self.floor.floor_height - 38:  # Check if the dinosaur is on the ground
           self.dinosaur.jump()
 
@@ -293,6 +306,16 @@ class Game(Widget):
             except:
                 pass  # Handle case when clock is already unscheduled
             self.game_over = True
+
+    def _keyboard_closed(self):
+        self._keyboard.unbind(on_key_down=self.on_keyboard_down)
+        self._keyboard = None
+
+    def on_keyboard_down(self, keyboard, keycode, text, modifiers):
+        # Handle keyboard events
+        if not self.game_over:
+            if keycode[1] == 'spacebar':  # Check if the key pressed is the spacebar
+                self.dinosaur_jump()
 
 class T_RexApp(App):
     def build(self):

@@ -12,7 +12,7 @@ from kivy.uix.button import Button
 from StartPage import StartPage
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.core.image import Image as CoreImage
-
+from kivy.lang import Builder
 
 class Background(Widget):
     cloud_texture = ObjectProperty(None)
@@ -63,20 +63,20 @@ class Background(Widget):
         self.update_score_label_position()  # Call the method to update the score label position
 
 
-
 class Dinosaur(Image):
     is_jumping = False
     jump_height = NumericProperty(300)
     jump_speed = NumericProperty(300)
     gravity = NumericProperty(600)
+    rungif_speed = NumericProperty(0.2)
     jump_sound = SoundLoader.load('sounds/dino_jump.wav')  # Load the jump sound effect
 
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.source = 'images/T_rex_red.gif'
+        self.source = 'images/Trexred.gif'
         self.size_hint = (None, None)
-        self.size = (100, 100)
+        self.size = (150, 150)
         self.pos_hint = {'center_x': 0.1, 'center_y': 0.3}
         self.velocity_y = 0
         self.center_x = Window.width / 3 
@@ -101,6 +101,13 @@ class Dinosaur(Image):
             self.velocity_y = 0
             self.y = 0
             self.is_jumping = False
+
+        self.anim_delay = 1 / (self.rungif_speed * 30)
+
+    def increase_rungif_speed(self, amount):
+        # Increase the rungif_speed by the specified amount
+        self.rungif_speed += amount
+
     def jump(self):
         if not self.is_jumping:
             self.is_jumping = True
@@ -108,6 +115,7 @@ class Dinosaur(Image):
             if self.jump_sound:
                 self.jump_sound.volume = 1  # Adjust the volume of the jump sound effect
                 self.jump_sound.play()  # Play the jump sound effect
+
 
 class Floor(Widget):
     def __init__(self, **kwargs):
@@ -188,7 +196,8 @@ class Point(Widget):
             # Increase game speed slightly when score reaches multiples of 100
                 self.parent.floor.velocity_x += 50 # Increase floor velocity
                 self.parent.dinosaur.jump_speed += 50
-                self.parent.dinosaur.gravity += 50
+                self.parent.dinosaur.gravity += 25
+                self.parent.dinosaur.increase_rungif_speed(0.075)
                 self.parent.obstacle.velocity_x += 50
     def stop_score_increment(self):
         Clock.unschedule(self.update_score)  # Stop incrementing score

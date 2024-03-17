@@ -281,7 +281,8 @@ class Game(Widget):
                 self.dinosaur_jump(touch)  # เรียกเมธอดให้ดิโนเสาร์กระโดด
     
     def dinosaur_jump(self, touch):
-        self.dinosaur.jump()
+        if self.dinosaur.y == self.floor.floor_height - 38:  # Check if the dinosaur is on the ground
+          self.dinosaur.jump()
 
     def stop_game(self):
         # Stop the game completely

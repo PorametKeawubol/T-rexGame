@@ -200,55 +200,58 @@ class Point(Widget):
 class Game(Widget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        # Initialize game state
+        self.game_over = False
+        self.paused = False
+        self.initialize_game()
+
+    def initialize_game(self):
+        # Reset game state
+        self.clear_widgets()
         self.background = Background()
         self.dinosaur = Dinosaur()
         self.obstacle = Obstacle()
-        self.floor = Floor()  # Create an instance of Floor
-        self.point = Point()  # Create an instance of Point
+        self.floor = Floor()
+        self.point = Point()
         self.add_widget(self.background)
         self.add_widget(self.dinosaur)
         self.add_widget(self.obstacle)
-        self.add_widget(self.floor)  # Add floor to the game
-        self.add_widget(self.point) 
-        self.point.game_over = False  # Initialize the game_over flag
-        self.background_music = SoundLoader.load('sounds/cottagecore-17463.mp3')  # Load background music
+        self.add_widget(self.floor)
+        self.add_widget(self.point)
+        self.point.game_over = False
+        self.background_music = SoundLoader.load('sounds/cottagecore-17463.mp3')
         if self.background_music:
             self.background_music.loop = True
-            self.background_music.play() 
-        self.paused = False  # Start playing background music
-        self.game_over = False  # Initialize game over state
-        self.game_clock = None  # Initialize game clock reference
+            self.background_music.play()
+        self.paused = False
+        self.game_over = False
+        self.game_clock = None
         Clock.schedule_interval(self.update, 1 / 60)
         Clock.schedule_interval(self.background.scroll_textures, 1/60)
-          # Scroll textures every 0.1 seconds
-
-        # Create pause button as an image
         self.pause_image = Image(source="images/PAUSE.png", size_hint=(None, None), size=(100, 50),
                                  pos=(10, Window.height - 60))
-        self.pause_image.bind(on_press=self.toggle_pause)  # Bind the image to the toggle_pause method
+        self.pause_image.bind(on_press=self.toggle_pause)
         self.add_widget(self.pause_image)
 
     def toggle_pause(self, instance):
-        if self.paused:  # ถ้าเกมถูก pause
-            Clock.schedule_interval(self.update, 1 / 60)  # ทำการ resume เกม
-            Clock.schedule_interval(self.background.scroll_textures, 1/60)  # resume scrolling textures
-            self.paused = False  # อัปเดตสถานะเป็นไม่ pause
+        if self.paused:
+            Clock.schedule_interval(self.update, 1 / 60)
+            Clock.schedule_interval(self.background.scroll_textures, 1/60)
+            self.paused = False
             self.pause_image.source = "images/PAUSE.png"
-            self.point.start_score_increment()  
-           # เปลี่ยนภาพของปุ่มเป็น PAUSE
-        else:  # ถ้าเกมไม่ได้ถูก pause
-            Clock.unschedule(self.update)  # หยุดการอัปเดตเกม
-            Clock.unschedule(self.background.scroll_textures)  # หยุดการ scroll textures
-            self.paused = True  # อัปเดตสถานะเป็น pause
+            self.point.start_score_increment()
+        else:
+            Clock.unschedule(self.update)
+            Clock.unschedule(self.background.scroll_textures)
+            self.paused = True
             self.pause_image.source = "images/RESUME.png"
-            self.point.stop_score_increment()  
-         
+            self.point.stop_score_increment()
 
     def update(self, dt):
-        if not self.game_over:  # Check if the game is not over
+        if not self.game_over:
             self.dinosaur.update(dt)
             self.obstacle.update(dt)
-            self.floor.update(dt)  # Update floor position
+            self.floor.update(dt)
             if self.dinosaur.collide_widget(self.obstacle):
                 self.game_over = True
                 self.game_over_actions()
@@ -256,39 +259,27 @@ class Game(Widget):
     def game_over_actions(self):
         if not self.game_clock:
             try:
-                Clock.unschedule(self.update)  # Stop the game update loop
-                Clock.unschedule(self.background.scroll_textures)  # Stop scrolling textures
+                Clock.unschedule(self.update)
+                Clock.unschedule(self.background.scroll_textures)
             except:
-                pass  # Handle case when clock is already unscheduled
+                pass
             self.game_over_image = Image(source='images/GAME-OVER.png', size_hint=(None, None), size=(400, 200),
                              pos=(Window.width / 2 - 200, Window.height / 2 + 25))
             self.add_widget(self.game_over_image)
-
-
-            self.background_music.stop()  # Stop playing the current background music
-            # Load and play another song for game over
-            
+            self.background_music.stop()
             game_over_music = SoundLoader.load('sounds/NeverGiveUp.mp3')
             if game_over_music:
-                game_over_music.volume = 0.2  # Set the volume to 20%
+                game_over_music.volume = 0.2
                 game_over_music.play()
-
-            play_again_button = Button(text="Play Again", size_hint=(None, None), size=(150, 50),
-                                       pos=(Window.width / 2 - 75, Window.height / 2 - 75))
-            play_again_button.bind(on_release=self.play_again)
-            self.add_widget(play_again_button)
-            
-            self.point.game_over = True  # Set game_over flag to True
-            self.point.stop_score_increment()  # Stop score incrementation
-
+            self.point.game_over = True
+            self.point.stop_score_increment()
     def on_touch_down(self, touch):
         if not self.game_over:  # ตรวจสอบว่าเกมยังไม่จบ
             if self.pause_image.collide_point(*touch.pos):  # ตรวจสอบว่าที่คลิกอยู่บนปุ่ม pause/resume
                 self.toggle_pause(self.pause_image)  # เรียกเมธอด toggle_pause เพื่อ pause หรือ resume เกม
             else:  # ถ้าไม่ได้คลิกที่ปุ่ม pause/resume
                 self.dinosaur_jump(touch)  # เรียกเมธอดให้ดิโนเสาร์กระโดด
-
-
+    
     def dinosaur_jump(self, touch):
         self.dinosaur.jump()
 
@@ -301,18 +292,6 @@ class Game(Widget):
             except:
                 pass  # Handle case when clock is already unscheduled
             self.game_over = True
-
-    def play_again(self, instance):
-        # Reset the game when Play Again button is pressed
-        self.clear_widgets()  # Clear all widgets
-        self.__init__()  # Reinitialize the game
-
-        # Start the game again
-        if self.background_music:
-            self.background_music.loop = True
-            self.background_music.play() 
-        self.game_clock = Clock.schedule_interval(self.update, 1 / 60)
-        self.paused = False
 
 class T_RexApp(App):
     def build(self):

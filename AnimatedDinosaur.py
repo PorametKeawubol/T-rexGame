@@ -1,38 +1,43 @@
 from kivy.uix.image import Image
 from kivy.clock import Clock
+from kivy.base import runTouchApp
 
 class AnimatedDinosaur(Image):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.source = 'images/sheets/DinoSprites - vita.png'  # Set the source image
-        self.frame_width = 100  # Width of each frame in the sprite sheet
-        self.frame_height = 100  # Height of each frame in the sprite sheet
-        self.num_frames = 10  # Total number of frames in the sprite sheet
+        self.frames = []  # List to store the frames of the animation
         self.current_frame = 0  # Index of the current frame
         self.frame_duration = 0.1  # Duration (in seconds) for each frame
-
-        # Schedule the update of frames
+        self.is_animating = False  # Flag to indicate whether the animation is playing
+        self.load_frames()  # Load frames of the animation
         self.frame_update = Clock.schedule_interval(self.update_frame, self.frame_duration)
 
+    def load_frames(self):
+        # Load individual frames of the animation
+        for i in range(1, 11):  # Assuming there are 10 frames numbered from 1 to 10
+            frame_source = f'images/sheets/DinoSprites - vita{i}.png'  # Adjust path and naming convention as needed
+            frame = Image(source=frame_source)
+            self.frames.append(frame)
+
     def update_frame(self, dt):
-        # Calculate the position of the current frame in the sprite sheet
-        frame_x = self.current_frame * self.frame_width
-        frame_y = 0  # Assuming all frames are in the same row
+        if self.is_animating:
+            # Display the current frame
+            self.texture = self.frames[self.current_frame].texture
 
-        # Set the texture coordinates to display the current frame
-        self.texture = self.texture.get_region(frame_x, frame_y, self.frame_width, self.frame_height)
+            # Move to the next frame
+            self.current_frame = (self.current_frame + 1) % len(self.frames)
 
-        # Increment or decrement the current frame based on direction
-        self.current_frame += 1
-
-        # If reached the end or beginning, reverse direction
-        if self.current_frame >= self.num_frames or self.current_frame <= 0:
-            self.frame_duration *= -1  # Reverse the frame update direction
-
-        # Clamp the current frame index within range
-        self.current_frame = min(max(0, self.current_frame), self.num_frames - 1)
+    def start_animation(self):
+        # Start playing the animation
+        self.is_animating = True
 
     def stop_animation(self):
-        # Stop the frame update schedule
-        if self.frame_update:
-            self.frame_update.cancel()
+        # Stop playing the animation
+        self.is_animating = False
+
+if __name__ == '__main__':
+    # Create an instance of the AnimatedDinosaur widget
+    animated_dinosaur = AnimatedDinosaur()
+
+    # Run the app by passing the widget instance after a slight delay
+    Clock.schedule_once(lambda dt: runTouchApp(animated_dinosaur), 0.1)

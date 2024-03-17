@@ -12,6 +12,8 @@ from kivy.uix.button import Button
 from StartPage import StartPage
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.core.image import Image as CoreImage
+from AnimatedDinosaur import AnimatedDinosaur
+
 
 
 class Background(Widget):
@@ -270,6 +272,12 @@ class Game(Widget):
             if game_over_music:
                 game_over_music.volume = 0.2  # Set the volume to 20%
                 game_over_music.play()
+
+            play_again_button = Button(text="Play Again", size_hint=(None, None), size=(150, 50),
+                                       pos=(Window.width / 2 - 75, Window.height / 2 - 75))
+            play_again_button.bind(on_release=self.play_again)
+            self.add_widget(play_again_button)
+            
             self.point.game_over = True  # Set game_over flag to True
             self.point.stop_score_increment()  # Stop score incrementation
 
@@ -293,6 +301,18 @@ class Game(Widget):
             except:
                 pass  # Handle case when clock is already unscheduled
             self.game_over = True
+
+    def play_again(self, instance):
+        # Reset the game when Play Again button is pressed
+        self.clear_widgets()  # Clear all widgets
+        self.__init__()  # Reinitialize the game
+
+        # Start the game again
+        if self.background_music:
+            self.background_music.loop = True
+            self.background_music.play() 
+        self.game_clock = Clock.schedule_interval(self.update, 1 / 60)
+        self.paused = False
 
 class T_RexApp(App):
     def build(self):

@@ -108,6 +108,10 @@ class Dinosaur(Image):
         # Increase the rungif_speed by the specified amount
         self.rungif_speed += amount
 
+    def stop_animation(self):
+        # Stop the running animation
+        self.anim_delay = -1 
+
     def jump(self):
         if not self.is_jumping:
             self.is_jumping = True
@@ -319,12 +323,15 @@ class Game(Widget):
             self.paused = False
             self.pause_image.source = "images/PAUSE.png"
             self.point.start_score_increment()
+            
+             
         else:
             Clock.unschedule(self.update)
             Clock.unschedule(self.background.scroll_textures)
             self.paused = True
             self.pause_image.source = "images/RESUME.png"
             self.point.stop_score_increment()
+            self.dinosaur.stop_animation()
 
     def update(self, dt):
         if not self.game_over:
@@ -354,6 +361,7 @@ class Game(Widget):
                 game_over_music.play()
             self.point.game_over = True
             self.point.stop_score_increment()
+            self.dinosaur.stop_animation()
             
     def on_touch_down(self, touch):
         if not self.game_over:  # ตรวจสอบว่าเกมยังไม่จบ

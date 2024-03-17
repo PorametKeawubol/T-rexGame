@@ -12,8 +12,6 @@ from kivy.uix.button import Button
 from StartPage import StartPage
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.core.image import Image as CoreImage
-from AnimatedDinosaur import AnimatedDinosaur
-
 
 
 class Background(Widget):
@@ -214,6 +212,7 @@ class Game(Widget):
         self.game_over_image = None
         self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
         self._keyboard.bind(on_key_down=self.on_keyboard_down)
+        self.bind(size=self.update_pause_position)
         self.initialize_game()
         
 
@@ -244,6 +243,10 @@ class Game(Widget):
                                  pos=(10, Window.height - 60))
         self.pause_image.bind(on_press=self.toggle_pause)
         self.add_widget(self.pause_image)
+        
+    def update_pause_position(self, instance, size):
+        # Update the position of the pause image whenever the window size changes
+        self.pause_image.pos = (10, Window.height - 60)
 
     def toggle_pause(self, instance):
         if self.paused:

@@ -215,7 +215,7 @@ class AirObstacle(Widget):
         self.flying_dinosaur.pos = (self.x, self.y +50)  # Reset the position of the flying dinosaur
 
 class Point(Widget):
-    score = NumericProperty(300)
+    score = NumericProperty(0)
     game_over = False  # Add a flag to track game over state
     checkpoint_sound = SoundLoader.load('sounds/dino_checkpoint.wav')  # Load the checkpoint sound effect
 

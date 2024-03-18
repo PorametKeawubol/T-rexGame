@@ -16,4 +16,8 @@ Press the Spacebar key to jump and avoid cactus.
 
 ## Game demo
 
-![Game demo](/video/gamedemo.mp4)
+
+https://github.com/PorametKeawubol/T-rexGame/assets/153811120/2e593a1a-0cfd-498a-9d35-2cc738a19a6b
+
+
+

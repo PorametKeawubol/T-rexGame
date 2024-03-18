@@ -5,7 +5,7 @@
 
 ## How to Play  
 
-Press the play button to start the game.
+Press the play button to start the game. \
 Press the Spacebar key to jump and avoid cactus.
 
 ## Screenshot
@@ -16,4 +16,4 @@ Press the Spacebar key to jump and avoid cactus.
 
 ## Game demo
 
-![Game demo](/video/game%20demo.mkv)
+![Game demo](/video/gamedemo.mp4)

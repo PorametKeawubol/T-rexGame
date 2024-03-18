@@ -9,7 +9,7 @@ class StartPage(AnchorLayout):
         super().__init__(**kwargs)
         
         # Set up the background
-        self.background = Image(source='images/background.png', allow_stretch=True, keep_ratio=False)
+        self.background = Image(source='images/dinoCharacters-display.gif', allow_stretch=True, keep_ratio=False)
         self.add_widget(self.background)
         
         # Create a layout to center the button

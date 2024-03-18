@@ -66,7 +66,7 @@ class Background(Widget):
 class Dinosaur(Image):
     is_jumping = False
     jump_height = NumericProperty(300)
-    jump_speed = NumericProperty(300)
+    jump_speed = NumericProperty(350)
     gravity = NumericProperty(600)
     rungif_speed = NumericProperty(0.2)
     jump_sound = SoundLoader.load('sounds/dino_jump.wav')  # Load the jump sound effect
@@ -178,41 +178,41 @@ class Obstacle(Widget):
         self.y = 42
         self.cactus_texture.pos = (self.x, self.y + 100)  # Reset cactus position
 
-class AirObstacle(Widget):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.size_hint = (None, None)
-        self.size = (100, 100)
-        self.velocity_x = 300
-        self.spawned = False  # Flag to track if the obstacle has been spawned
+# class AirObstacle(Widget):
+#     def __init__(self, **kwargs):
+#         super().__init__(**kwargs)
+#         self.size_hint = (None, None)
+#         self.size = (100, 100)
+#         self.velocity_x = 300
+#         self.spawned = False  # Flag to track if the obstacle has been spawned
 
-        # Set up the flying dinosaur image
-        self.flying_dinosaur_texture = Image(source='images/Dino_Flying2.gif').texture
-        with self.canvas:
-            self.flying_dinosaur = Rectangle(texture=self.flying_dinosaur_texture, size=self.size, pos=(self.x, self.y))
+#         # Set up the flying dinosaur image
+#         self.flying_dinosaur_texture = Image(source='images/Dino_Flying.gif').texture
+#         with self.canvas:
+#             self.flying_dinosaur = Rectangle(texture=self.flying_dinosaur_texture, size=self.size, pos=(self.x, self.y))
 
-    def update(self, dt):
-        # Check if the obstacle has been spawned and the score exceeds 400
-        if not self.spawned and self.parent.point.score > 400:
-            # Set the position of the obstacle randomly
-            self.x = Window.width + randint(100, 500)
-            self.y = Window.height/2 - randint(50, 100)
-            self.flying_dinosaur.pos = (self.x, self.y + 50)
-            self.spawned = True  # Set the flag to True after spawning the obstacle
+#     def update(self, dt):
+#         # Check if the obstacle has been spawned and the score exceeds 400
+#         if not self.spawned and self.parent.point.score > 400:
+#             # Set the position of the obstacle randomly
+#             self.x = Window.width + randint(100, 500)
+#             self.y = Window.height/2 - randint(50, 100)
+#             self.flying_dinosaur.pos = (self.x, self.y + 50)
+#             self.spawned = True  # Set the flag to True after spawning the obstacle
 
-        # Move the air obstacle horizontally
-        self.x -= self.velocity_x * dt
-        self.flying_dinosaur.pos = (self.x, self.y + 50)  # Update the position of the flying dinosaur
+#         # Move the air obstacle horizontally
+#         self.x -= self.velocity_x * dt
+#         self.flying_dinosaur.pos = (self.x, self.y + 50)  # Update the position of the flying dinosaur
         
-        # Check if the obstacle has moved off-screen to the left
-        if self.x < -self.width:
-            self.reset_position()
+#         # Check if the obstacle has moved off-screen to the left
+#         if self.x < -self.width:
+#             self.reset_position()
 
-    def reset_position(self):
-        # Reset the position of the air obstacle to the right of the window
-        self.x = Window.width + randint(100, 500)
-        self.y = Window.height/2 - randint(50, 100)  # Adjust the height as needed
-        self.flying_dinosaur.pos = (self.x, self.y +50)  # Reset the position of the flying dinosaur
+#     def reset_position(self):
+#         # Reset the position of the air obstacle to the right of the window
+#         self.x = Window.width + randint(100, 500)
+#         self.y =  (self.x, self.y +50) # Adjust the height as needed
+#         self.flying_dinosaur.pos = (self.x, self.y +50)  # Reset the position of the flying dinosaur
 
 class Point(Widget):
     score = NumericProperty(0)
@@ -241,18 +241,18 @@ class Point(Widget):
                 self.parent.dinosaur.increase_rungif_speed(0.075)
                 self.parent.obstacle.velocity_x += 50
 
-                if self.score > 400 and not self.air_obstacle_created:
-                  self.create_air_obstacle()
-                  self.air_obstacle_created = True
+                # if self.score > 400 and not self.air_obstacle_created:
+                #   self.create_air_obstacle()
+                #   self.air_obstacle_created = True
 
-                if self.score > 1000 and self.score % 1000 == 0:
-                  self.create_air_obstacle()
+                # if self.score > 1000 and self.score % 1000 == 0:
+                #   self.create_air_obstacle()
 
-    def create_air_obstacle(self):
-        self.parent.air_obstacle = AirObstacle()
-        self.parent.add_widget(self.parent.air_obstacle)
-        self.parent.air_obstacle.velocity_x = 300
-        self.parent.air_obstacle.pos_hint = {'center_x': 1, 'center_y': 0.3}
+    # def create_air_obstacle(self):
+    #     self.parent.air_obstacle = AirObstacle()
+    #     self.parent.add_widget(self.parent.air_obstacle)
+    #     self.parent.air_obstacle.velocity_x = 300
+    #     self.parent.air_obstacle.pos_hint = {'center_x': 1, 'center_y': 0.3}
 
     def stop_score_increment(self):
         Clock.unschedule(self.update_score)
@@ -270,7 +270,7 @@ class Game(Widget):
         self.background = None
         self.dinosaur = None
         self.obstacle = None
-        self.air_obstacle = None
+        # self.air_obstacle = None
         self.floor = None
         self.point = None
         self.background_music = None
@@ -288,13 +288,13 @@ class Game(Widget):
         self.background = Background()
         self.dinosaur = Dinosaur()
         self.obstacle = Obstacle()
-        self.air_obstacle = AirObstacle()
+        # self.air_obstacle = AirObstacle()
         self.floor = Floor()
         self.point = Point()
         self.add_widget(self.background)
         self.add_widget(self.dinosaur)
         self.add_widget(self.obstacle)
-        self.add_widget(self.air_obstacle)
+        # self.add_widget(self.air_obstacle)
         self.add_widget(self.floor)
         self.add_widget(self.point)
         self.point.game_over = False
@@ -337,10 +337,10 @@ class Game(Widget):
         if not self.game_over:
             self.dinosaur.update(dt)
             self.obstacle.update(dt)
-            if self.point.score > 400:
-                self.air_obstacle.update(dt)
+            # if self.point.score > 400:
+            #     self.air_obstacle.update(dt)
             self.floor.update(dt)
-            if self.dinosaur.collide_widget(self.obstacle) or self.dinosaur.collide_widget(self.air_obstacle):
+            if self.dinosaur.collide_widget(self.obstacle) :
                 self.game_over = True
                 self.game_over_actions()
 

@@ -15,3 +15,5 @@ Press the Spacebar key to jump and avoid cactus.
 ![Screenshot](/images/Screenshotgameover.png)
 
 ## Game demo
+
+![Game demo](/video/game%20demo.mkv)

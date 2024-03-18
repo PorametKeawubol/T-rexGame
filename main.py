@@ -258,7 +258,7 @@ class Point(Widget):
         Clock.unschedule(self.update_score)
 
     def start_score_increment(self):
-        self.score_increment = Clock.schedule_interval(self.update_score, 0.07)
+        self.score_increment = Clock.schedule_interval(self.update_score, 1)
         
 class Game(Widget):
     def __init__(self, **kwargs):
@@ -362,6 +362,8 @@ class Game(Widget):
             self.point.game_over = True
             self.point.stop_score_increment()
             self.dinosaur.stop_animation()
+
+            
             
     def on_touch_down(self, touch):
         if not self.game_over:  # ตรวจสอบว่าเกมยังไม่จบ
